@@ -9,7 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "calculation", urlPatterns = { "/calculation" })
 public class CalculationControllerServlet extends HttpServlet {
@@ -17,12 +17,19 @@ public class CalculationControllerServlet extends HttpServlet {
         String[] parameters = {"a_from", "a_to", "a_step", "b_from", "b_to", "b_step", "c_from", "c_to", "c_step", "d_from", "d_to", "d_step"};
         List<String> paramValues = new ArrayList<>();
 
+        HttpSession session = request.getSession();
+
         for (String param : parameters) {
             String value = request.getParameter(param);
-            paramValues.add(value);
-            Cookie cookie = new Cookie(param, value);
-            cookie.setMaxAge(60 * 60 * 24 * 30);
-            response.addCookie(cookie);
+            if (value != null && !value.isEmpty()) {
+                paramValues.add(value);
+                session.setAttribute(param, value);
+            } else {
+                String sessionValue = (String) session.getAttribute(param);
+                if (sessionValue != null) {
+                    paramValues.add(sessionValue);
+                }
+            }
         }
 
         List<String> aValues = getValues(Integer.parseInt(paramValues.get(0)), Integer.parseInt(paramValues.get(1)), Integer.parseInt(paramValues.get(2)));

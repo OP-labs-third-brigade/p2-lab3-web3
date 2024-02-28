@@ -3,24 +3,40 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
 <%
-    Map<String, String> cookieMap = new HashMap<>();
-    if (request.getCookies() != null) {
-        for (Cookie cookie : request.getCookies()) {
-            cookieMap.put(cookie.getName(), cookie.getValue());
-        }
+    session = request.getSession();
+    Map<String, String> paramDefaults = new HashMap<>();
+
+    paramDefaults.put("a_from", "1");
+    paramDefaults.put("a_to", "2");
+    paramDefaults.put("a_step", "3");
+    paramDefaults.put("b_from", "2");
+    paramDefaults.put("b_to", "4");
+    paramDefaults.put("b_step", "2");
+    paramDefaults.put("c_from", "0");
+    paramDefaults.put("c_to", "3");
+    paramDefaults.put("c_step", "1");
+    paramDefaults.put("d_from", "1");
+    paramDefaults.put("d_to", "2");
+    paramDefaults.put("d_step", "2");
+
+    Map<String, String> paramValues = new HashMap<>();
+    for (String paramName : paramDefaults.keySet()) {
+        String paramValue = (String) session.getAttribute(paramName);
+        paramValues.put(paramName, paramValue != null ? paramValue : paramDefaults.get(paramName));
     }
-    String paramAFrom = cookieMap.getOrDefault("a_from", "1");
-    String paramATo = cookieMap.getOrDefault("a_to", "2");
-    String paramAStep = cookieMap.getOrDefault("a_step", "3");
-    String paramBFrom = cookieMap.getOrDefault("b_from", "2");
-    String paramBTo = cookieMap.getOrDefault("b_to", "4");
-    String paramBStep = cookieMap.getOrDefault("b_step", "2");
-    String paramCFrom = cookieMap.getOrDefault("c_from", "0");
-    String paramCTo = cookieMap.getOrDefault("c_to", "3");
-    String paramCStep = cookieMap.getOrDefault("c_step", "1");
-    String paramDFrom = cookieMap.getOrDefault("d_from", "1");
-    String paramDTo = cookieMap.getOrDefault("d_to", "2");
-    String paramDStep = cookieMap.getOrDefault("d_step", "2");
+
+    String paramAFrom = paramValues.get("a_from");
+    String paramATo = paramValues.get("a_to");
+    String paramAStep = paramValues.get("a_step");
+    String paramBFrom = paramValues.get("b_from");
+    String paramBTo = paramValues.get("b_to");
+    String paramBStep = paramValues.get("b_step");
+    String paramCFrom = paramValues.get("c_from");
+    String paramCTo = paramValues.get("c_to");
+    String paramCStep = paramValues.get("c_step");
+    String paramDFrom = paramValues.get("d_from");
+    String paramDTo = paramValues.get("d_to");
+    String paramDStep = paramValues.get("d_step");
 %>
 <!DOCTYPE html>
 <html>
@@ -77,10 +93,10 @@
                     for (int j = 0; j < bValues.size(); j++) {
                         for (int k = 0; k < cValues.size(); k++) {
                             for (int l = 0; l < dValues.size(); l++) {
-                                String a = dValues.get(l);
-                                String b = cValues.get(k);
-                                String c = bValues.get(j);
-                                String d = aValues.get(i);
+                                String a = aValues.get(i);
+                                String b = bValues.get(j);
+                                String c = cValues.get(k);
+                                String d = dValues.get(l);
                                 Double result = results.get(counter);
                                 counter += 1;
         %>
