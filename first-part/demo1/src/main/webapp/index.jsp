@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 <%
     Map<String, String> cookieMap = new HashMap<>();
     if (request.getCookies() != null) {
@@ -26,62 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Обчислення формули Y</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        form {
-            margin-top: 20px;
-        }
-
-        label {
-            display: inline-block;
-            width: 120px;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"] {
-            width: 150px;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #6f427c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #6f427c;
-        }
-    </style>
+    <link href="./styles/styles.css" rel="stylesheet" />
 </head>
 <body>
 <div class="container">
@@ -108,6 +54,56 @@
         step <input type="text" id="d_step" name="d_step" value="<%= paramDStep %>"><br><br>
         <input type="submit" value="Обчислити">
     </form>
+    <% if (request.getAttribute("results") != null) { %>
+    <h2>Результати:</h2>
+    <table border="1">
+        <tr>
+            <th>a</th>
+            <th>b</th>
+            <th>c</th>
+            <th>d</th>
+            <th>y</th>
+        </tr>
+        <%
+            List<String> aValues = (List<String>) request.getAttribute("aValues");
+            List<String> bValues = (List<String>) request.getAttribute("bValues");
+            List<String> cValues = (List<String>) request.getAttribute("cValues");
+            List<String> dValues = (List<String>) request.getAttribute("dValues");
+            List<Double> results = (List<Double>) request.getAttribute("results");
+            int counter = 0;
+
+            if (results != null) {
+                for (int i = 0; i < aValues.size(); i++) {
+                    for (int j = 0; j < bValues.size(); j++) {
+                        for (int k = 0; k < cValues.size(); k++) {
+                            for (int l = 0; l < dValues.size(); l++) {
+                                String a = dValues.get(l);
+                                String b = cValues.get(k);
+                                String c = bValues.get(j);
+                                String d = aValues.get(i);
+                                Double result = results.get(counter);
+                                counter += 1;
+        %>
+
+        <tr>
+            <td><%= a %></td>
+            <td><%= b %></td>
+            <td><%= c %></td>
+            <td><%= d %></td>
+            <td><%= result %></td>
+        </tr>
+        <%
+                        }
+                    }
+                }}
+        } else {
+        %>
+        <tr>
+            <td colspan="5">No parameters or results available</td>
+        </tr>
+        <% } %>
+    </table>
+    <% } %>
 </div>
 </body>
 </html>
