@@ -1,87 +1,49 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 <%
-    Map<String, String> cookieMap = new HashMap<>();
-    if (request.getCookies() != null) {
-        for (Cookie cookie : request.getCookies()) {
-            cookieMap.put(cookie.getName(), cookie.getValue());
-        }
+    session = request.getSession();
+    Map<String, String> paramDefaults = new HashMap<>();
+
+    paramDefaults.put("a_from", "1");
+    paramDefaults.put("a_to", "2");
+    paramDefaults.put("a_step", "3");
+    paramDefaults.put("b_from", "2");
+    paramDefaults.put("b_to", "4");
+    paramDefaults.put("b_step", "2");
+    paramDefaults.put("c_from", "0");
+    paramDefaults.put("c_to", "3");
+    paramDefaults.put("c_step", "1");
+    paramDefaults.put("d_from", "1");
+    paramDefaults.put("d_to", "2");
+    paramDefaults.put("d_step", "2");
+
+    Map<String, String> paramValues = new HashMap<>();
+    for (String paramName : paramDefaults.keySet()) {
+        String paramValue = (String) session.getAttribute(paramName);
+        paramValues.put(paramName, paramValue != null ? paramValue : paramDefaults.get(paramName));
     }
-    String paramAFrom = cookieMap.getOrDefault("a_from", "1");
-    String paramATo = cookieMap.getOrDefault("a_to", "2");
-    String paramAStep = cookieMap.getOrDefault("a_step", "3");
-    String paramBFrom = cookieMap.getOrDefault("b_from", "2");
-    String paramBTo = cookieMap.getOrDefault("b_to", "4");
-    String paramBStep = cookieMap.getOrDefault("b_step", "2");
-    String paramCFrom = cookieMap.getOrDefault("c_from", "0");
-    String paramCTo = cookieMap.getOrDefault("c_to", "3");
-    String paramCStep = cookieMap.getOrDefault("c_step", "1");
-    String paramDFrom = cookieMap.getOrDefault("d_from", "1");
-    String paramDTo = cookieMap.getOrDefault("d_to", "2");
-    String paramDStep = cookieMap.getOrDefault("d_step", "2");
+
+    String paramAFrom = paramValues.get("a_from");
+    String paramATo = paramValues.get("a_to");
+    String paramAStep = paramValues.get("a_step");
+    String paramBFrom = paramValues.get("b_from");
+    String paramBTo = paramValues.get("b_to");
+    String paramBStep = paramValues.get("b_step");
+    String paramCFrom = paramValues.get("c_from");
+    String paramCTo = paramValues.get("c_to");
+    String paramCStep = paramValues.get("c_step");
+    String paramDFrom = paramValues.get("d_from");
+    String paramDTo = paramValues.get("d_to");
+    String paramDStep = paramValues.get("d_step");
 %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Обчислення формули Y</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        form {
-            margin-top: 20px;
-        }
-
-        label {
-            display: inline-block;
-            width: 120px;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"] {
-            width: 150px;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #6f427c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #6f427c;
-        }
-    </style>
+    <link href="./styles/styles.css" rel="stylesheet" />
 </head>
 <body>
 <div class="container">
@@ -108,6 +70,56 @@
         step <input type="text" id="d_step" name="d_step" value="<%= paramDStep %>"><br><br>
         <input type="submit" value="Обчислити">
     </form>
+    <% if (request.getAttribute("results") != null) { %>
+    <h2>Результати:</h2>
+    <table border="1">
+        <tr>
+            <th>a</th>
+            <th>b</th>
+            <th>c</th>
+            <th>d</th>
+            <th>y</th>
+        </tr>
+        <%
+            List<String> aValues = (List<String>) request.getAttribute("aValues");
+            List<String> bValues = (List<String>) request.getAttribute("bValues");
+            List<String> cValues = (List<String>) request.getAttribute("cValues");
+            List<String> dValues = (List<String>) request.getAttribute("dValues");
+            List<Double> results = (List<Double>) request.getAttribute("results");
+            int counter = 0;
+
+            if (results != null) {
+                for (int i = 0; i < aValues.size(); i++) {
+                    for (int j = 0; j < bValues.size(); j++) {
+                        for (int k = 0; k < cValues.size(); k++) {
+                            for (int l = 0; l < dValues.size(); l++) {
+                                String a = aValues.get(i);
+                                String b = bValues.get(j);
+                                String c = cValues.get(k);
+                                String d = dValues.get(l);
+                                Double result = results.get(counter);
+                                counter += 1;
+        %>
+
+        <tr>
+            <td><%= a %></td>
+            <td><%= b %></td>
+            <td><%= c %></td>
+            <td><%= d %></td>
+            <td><%= result %></td>
+        </tr>
+        <%
+                        }
+                    }
+                }}
+        } else {
+        %>
+        <tr>
+            <td colspan="5">No parameters or results available</td>
+        </tr>
+        <% } %>
+    </table>
+    <% } %>
 </div>
 </body>
 </html>
